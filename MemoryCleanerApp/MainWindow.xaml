@@ -1,0 +1,53 @@
+<Window x:Class="Bnscl.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="BNSCL" Width="400" Height="228"
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
+        Background="{StaticResource Bg}" Foreground="{StaticResource Text}"
+        Icon="Assets/bnscleaner.ico"
+        PreviewKeyDown="WindowPreviewKeyDown">
+  <Border Margin="10" Padding="14" CornerRadius="10"
+          Background="#0C1522" BorderBrush="{StaticResource Border}" BorderThickness="1">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <Border Grid.Row="0" Padding="11,9" CornerRadius="8"
+              Background="{StaticResource Panel}" BorderBrush="{StaticResource Border}" BorderThickness="1">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="ГОРЯЧАЯ КЛАВИША" Foreground="{StaticResource Muted}"
+                       FontWeight="Bold" FontSize="12"/>
+            <TextBlock x:Name="HotkeyText" Text="Alt+F2" Margin="0,2,0,0"
+                       Foreground="{StaticResource Accent}" FontSize="12" FontWeight="SemiBold"/>
+          </StackPanel>
+          <Button x:Name="AssignButton" Grid.Column="1" Content="Изменить"
+                  Style="{StaticResource CompactButton}" Click="AssignHotkeyClick" MinWidth="88"/>
+        </Grid>
+      </Border>
+
+      <Grid Grid.Row="1" Margin="0,10,0,0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="8"/>
+          <ColumnDefinition Width="130"/>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="0" Content="ОЧИСТИТЬ ПАМЯТЬ" Height="36"
+                Style="{StaticResource PrimaryButton}" Click="CleanClick"/>
+        <Button Grid.Column="2" Content="Установить плагин" Height="36"
+                Style="{StaticResource CompactButton}" Click="InstallClick"/>
+      </Grid>
+
+      <TextBlock x:Name="StatusText" Grid.Row="2" Margin="2,10,0,0"
+                 Text="Ожидание игры" Foreground="{StaticResource Muted}"
+                 FontSize="12" TextWrapping="Wrap"/>
+    </Grid>
+  </Border>
+</Window>

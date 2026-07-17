@@ -1,0 +1,27 @@
+# Visual Studio / MSBuild
+.vs/
+**/bin/
+**/obj/
+**/build/
+*.user
+*.suo
+*.pdb
+*.ilk
+*.iobj
+*.ipdb
+
+# Generated release artifacts
+release/
+release-*/
+
+# Generated native resource copied by build.ps1
+MemoryCleanerApp/Resources/bnscleaner.dll
+
+# Local settings and backups
+*.backup-*
+*.tmp
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+*.swp
