@@ -1,5 +1,7 @@
 # BNSCL
 
+[![Скачивания релизов](https://img.shields.io/github/downloads/Univashka/BNSCL/total?style=for-the-badge&label=downloads)](https://github.com/Univashka/BNSCL/releases)
+
 [English version](README.md)
 
 BNSCL — компактная утилита для очистки рабочего набора **Blade & Soul NEO** в Windows. Она состоит из небольшого WPF-интерфейса и минимального нативного плагина, который загружается в `BNSR.exe`.

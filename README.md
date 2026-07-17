@@ -1,5 +1,7 @@
 # BNSCL
 
+[![Release downloads](https://img.shields.io/github/downloads/Univashka/BNSCL/total?style=for-the-badge&label=downloads)](https://github.com/Univashka/BNSCL/releases)
+
 [Русская версия](README-RU.md)
 
 BNSCL is a compact working-set cleaner for **Blade & Soul NEO** on Windows. It consists of a small WPF controller and a native plugin loaded into `BNSR.exe`.
