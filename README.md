@@ -11,9 +11,9 @@ BNSCL is a compact working-set cleaner for **Blade & Soul NEO** on Windows. It c
 - one-click working-set cleanup;
 - configurable global hotkey;
 - displays memory usage before and after cleanup;
-- installs the LoaderU proxy (`winmm.dll`) and `LoaderU\bnscleaner.dll`;
+- installs `LoaderU\bnscleaner.dll` without replacing an existing `winmm.dll`;
 - backs up files before replacing them;
-- no accounts, license checks, telemetry, or network requests.
+- no accounts, license checks, or telemetry; networking is used only to download LoaderU when missing.
 
 ## How it works
 
@@ -43,7 +43,9 @@ BNSR\Binaries\Win64\winmm.dll
 BNSR\Binaries\Win64\LoaderU\bnscleaner.dll
 ```
 
-Existing files are copied to timestamped `.backup-*` files before replacement. When upgrading
+An existing `winmm.dll` is never replaced or renamed. If it is missing, BNSCL downloads the
+known LoaderU build over HTTPS and verifies its size and SHA-256 before installation.
+The existing `bnscleaner.dll` is copied to a timestamped `.backup-*` file before replacement. When upgrading
 from an older version, only `plugins\bnscleaner.dll` is removed; other files in the legacy
 `plugins` directory are left untouched. The default hotkey is `Alt+C`.
 

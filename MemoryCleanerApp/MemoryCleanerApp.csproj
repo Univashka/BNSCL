@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>BNSCL</AssemblyName>
     <RootNamespace>Bnscl</RootNamespace>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>false</SelfContained>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -19,7 +19,6 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\winmm.dll" LogicalName="winmm.dll" />
     <EmbeddedResource Include="Resources\bnscleaner.dll" LogicalName="bnscleaner.dll" />
     <Resource Include="Assets\bnscleaner.ico" />
   </ItemGroup>

@@ -2,8 +2,10 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
@@ -23,6 +25,9 @@ public partial class MainWindow : Window
     private const uint ModNoRepeat = 0x4000;
     private const string PluginDirectoryName = "LoaderU";
     private const string LegacyPluginDirectoryName = "plugins";
+    private const string LoaderDownloadUrl = "https://neoqol.ru/download/plugins/winmm.dll";
+    private const int LoaderExpectedSize = 118784;
+    private const string LoaderExpectedSha256 = "87DE14E689945AD8ECCB14EE383C3DDB9C6D8C73495189F1B62FB5CAC24FBCBD";
 
     private readonly string _settingsPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -167,7 +172,7 @@ public partial class MainWindow : Window
 
     private static double ToMb(ulong bytes) => bytes / 1024d / 1024d;
 
-    private void InstallClick(object sender, RoutedEventArgs e)
+    private async void InstallClick(object sender, RoutedEventArgs e)
     {
         if (Process.GetProcessesByName("BNSR").Any() || Process.GetProcessesByName("BNSR_unpacked").Any())
         {
@@ -192,10 +197,12 @@ public partial class MainWindow : Window
         {
             string plugins = Path.Combine(directory, PluginDirectoryName);
             Directory.CreateDirectory(plugins);
-            WriteResource("winmm.dll", Path.Combine(directory, "winmm.dll"));
+            bool loaderDownloaded = await EnsureLoaderAsync(directory);
             WriteResource("bnscleaner.dll", Path.Combine(plugins, "bnscleaner.dll"));
             StatusText.Text = RemoveLegacyCleaner(directory)
-                ? $"Плагин установлен: {directory}"
+                ? loaderDownloaded
+                    ? "LoaderU скачан, плагин установлен"
+                    : "Плагин установлен, существующий winmm.dll не изменён"
                 : "Плагин установлен в LoaderU, но старую копию удалить не удалось";
         }
         catch (UnauthorizedAccessException)
@@ -249,6 +256,39 @@ public partial class MainWindow : Window
         string temporary = target + ".tmp";
         using (FileStream output = File.Create(temporary)) stream.CopyTo(output);
         File.Move(temporary, target, true);
+    }
+
+    private async Task<bool> EnsureLoaderAsync(string gameDirectory)
+    {
+        string target = Path.Combine(gameDirectory, "winmm.dll");
+        if (File.Exists(target)) return false;
+
+        StatusText.Text = "LoaderU не найден — скачивание…";
+        return await EnsureLoaderFileAsync(target);
+    }
+
+    private static async Task<bool> EnsureLoaderFileAsync(string target)
+    {
+        if (File.Exists(target)) return false;
+
+        using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
+        byte[] bytes = await client.GetByteArrayAsync(LoaderDownloadUrl);
+        string hash = Convert.ToHexString(SHA256.HashData(bytes));
+        if (bytes.Length != LoaderExpectedSize || !hash.Equals(LoaderExpectedSha256, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException("Скачанный LoaderU не прошёл проверку целостности");
+
+        string temporary = target + ".tmp";
+        try
+        {
+            await File.WriteAllBytesAsync(temporary, bytes);
+            File.Move(temporary, target, false);
+            return true;
+        }
+        catch
+        {
+            try { File.Delete(temporary); } catch { }
+            throw;
+        }
     }
 
     private static bool RemoveLegacyCleaner(string gameDirectory)
