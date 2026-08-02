@@ -25,7 +25,7 @@
           <StackPanel VerticalAlignment="Center">
             <TextBlock Text="ГОРЯЧАЯ КЛАВИША" Foreground="{StaticResource Muted}"
                        FontWeight="Bold" FontSize="12"/>
-            <TextBlock x:Name="HotkeyText" Text="Alt+F2" Margin="0,2,0,0"
+            <TextBlock x:Name="HotkeyText" Text="Alt+C" Margin="0,2,0,0"
                        Foreground="{StaticResource Accent}" FontSize="12" FontWeight="SemiBold"/>
           </StackPanel>
           <Button x:Name="AssignButton" Grid.Column="1" Content="Изменить"

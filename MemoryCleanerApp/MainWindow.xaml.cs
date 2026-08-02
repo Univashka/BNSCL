@@ -21,13 +21,15 @@ public partial class MainWindow : Window
     private const uint ModShift = 0x0004;
     private const uint ModWin = 0x0008;
     private const uint ModNoRepeat = 0x4000;
+    private const string PluginDirectoryName = "LoaderU";
+    private const string LegacyPluginDirectoryName = "plugins";
 
     private readonly string _settingsPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "BNSCL", "settings.json");
     private HwndSource? _source;
     private bool _capturing;
-    private HotkeySettings _settings = new(ModAlt, (uint)KeyInterop.VirtualKeyFromKey(Key.F2), "Alt+F2");
+    private HotkeySettings _settings = new(ModAlt, (uint)KeyInterop.VirtualKeyFromKey(Key.C), "Alt+C");
 
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -188,11 +190,13 @@ public partial class MainWindow : Window
 
         try
         {
-            string plugins = Path.Combine(directory, "plugins");
+            string plugins = Path.Combine(directory, PluginDirectoryName);
             Directory.CreateDirectory(plugins);
             WriteResource("winmm.dll", Path.Combine(directory, "winmm.dll"));
             WriteResource("bnscleaner.dll", Path.Combine(plugins, "bnscleaner.dll"));
-            StatusText.Text = $"Плагин установлен: {directory}";
+            StatusText.Text = RemoveLegacyCleaner(directory)
+                ? $"Плагин установлен: {directory}"
+                : "Плагин установлен в LoaderU, но старую копию удалить не удалось";
         }
         catch (UnauthorizedAccessException)
         {
@@ -245,6 +249,26 @@ public partial class MainWindow : Window
         string temporary = target + ".tmp";
         using (FileStream output = File.Create(temporary)) stream.CopyTo(output);
         File.Move(temporary, target, true);
+    }
+
+    private static bool RemoveLegacyCleaner(string gameDirectory)
+    {
+        string legacyDirectory = Path.Combine(gameDirectory, LegacyPluginDirectoryName);
+        string legacyPlugin = Path.Combine(legacyDirectory, "bnscleaner.dll");
+        if (!File.Exists(legacyPlugin)) return true;
+
+        try
+        {
+            File.SetAttributes(legacyPlugin, FileAttributes.Normal);
+            File.Delete(legacyPlugin);
+            if (Directory.Exists(legacyDirectory) && !Directory.EnumerateFileSystemEntries(legacyDirectory).Any())
+                Directory.Delete(legacyDirectory);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private void LoadSettings()
